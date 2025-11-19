@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор зарплаты продавца</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            padding: 10px 20px;
+            font-size: 14px;
+            width: auto;
+            margin-top: 0;
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-item.total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-left: none;
+            margin-top: 25px;
+            padding: 20px;
+        }
+
+        .result-item.bonus-10k {
+            background: #28a745;
+            color: white;
+            border-left: 4px solid #1e7e34;
+        }
+
+        .result-label {
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .result-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .result-item.total .result-value {
+            color: white;
+        }
+
+        .result-item.bonus-10k .result-value {
+            color: white;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .kpi-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .kpi-label {
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .kpi-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .helper-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible:hover {
+            opacity: 0.8;
+        }
+
+        .section-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Калькулятор зарплаты продавца</h1>
+
+        <!-- Параметры системы -->
+        <div class="card">
+            <div class="card-header collapsible" onclick="toggleSection('params')">
+                <span>⚙️ Параметры системы (настраиваемые)</span>
+                <button class="btn-secondary">Свернуть/Развернуть</button>
+            </div>
+
+            <div id="params" class="section-content">
+                <div class="grid">
+                    <div>
+                        <h3 style="color: #667eea; margin-bottom: 15px;">Базовые параметры</h3>
+
+                        <div class="form-group">
+                            <label>Норма рабочих дней (D норма)</label>
+                            <input type="number" id="d_norm" value="20">
+                            <div class="helper-text">Норма дней для одного продавца в месяц</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Оклад за норму дней (руб.)</label>
+                            <input type="number" id="oklad_norm" value="25000">
+                            <div class="helper-text">Оклад за полную норму дней</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #667eea; margin-bottom: 15px;">Целевые показатели</h3>
+
+                        <div class="form-group">
+                            <label>Целевой средний чек (руб.)</label>
+                            <input type="number" id="target_check" value="15000">
+                            <div class="helper-text">Какой средний чек считается 100% выполнением</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Целевая комплексность (товаров/чек)</label>
+                            <input type="number" id="target_comp" value="1.5" step="0.1">
+                            <div class="helper-text">Сколько товаров в среднем на чек</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Цель по чекам за норму дней</label>
+                            <input type="number" id="target_cheques" value="40">
+                            <div class="helper-text">Сколько чеков должен сделать продавец за норму дней</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #667eea; margin-bottom: 15px;">Личные бонусы</h3>
+
+                        <div class="form-group">
+                            <label>Бонус за средний чек (руб.)</label>
+                            <input type="number" id="bonus_check" value="6000">
+                            <div class="helper-text">Максимум за норму дней при k=1.0</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Бонус за комплексность (руб.)</label>
+                            <input type="number" id="bonus_comp" value="6000">
+                            <div class="helper-text">Максимум за норму дней при k=1.0</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Бонус за количество чеков (руб.)</label>
+                            <input type="number" id="bonus_qty" value="6000">
+                            <div class="helper-text">Максимум за норму дней при k=1.0</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #667eea; margin-bottom: 15px;">Командный и доп. бонусы</h3>
+
+                        <div class="form-group">
+                            <label>Командный бонус за норму дней (руб.)</label>
+                            <input type="number" id="bonus_team" value="8000">
+                            <div class="helper-text">Максимум за норму дней при k=1.0</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>% дополнительного бонуса</label>
+                            <input type="number" id="dop_percent" value="7" step="1">
+                            <div class="helper-text">Процент от выручки выше личного плана</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Бонус за сверхплан магазина (руб.)</label>
+                            <input type="number" id="bonus_super" value="10000">
+                            <div class="helper-text">Фиксированный бонус при выполнении условий</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Данные магазина -->
+        <div class="card">
+            <div class="card-header">🏪 Данные магазина</div>
+
+            <div class="grid">
+                <div class="form-group">
+                    <label>Минимальный план магазина (руб.)</label>
+                    <input type="number" id="plan_min" value="200000">
+                    <div class="helper-text">Нижний порог плана магазина</div>
+                </div>
+
+                <div class="form-group">
+                    <label>План магазина (руб.)</label>
+                    <input type="number" id="plan" value="250000">
+                    <div class="helper-text">Основной план на месяц</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Сверхплан магазина (руб.)</label>
+                    <input type="number" id="plan_super" value="300000">
+                    <div class="helper-text">Верхний целевой показатель магазина</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Факт выручки магазина (руб.)</label>
+                    <input type="number" id="shop_revenue" value="0">
+                    <div class="helper-text">Фактическая выручка всего магазина</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Сумма дней всех продавцов</label>
+                    <input type="number" id="total_days" value="20">
+                    <div class="helper-text">Сумма отработанных дней всех продавцов магазина</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Данные продавца -->
+        <div class="card">
+            <div class="card-header">👤 Данные продавца</div>
+
+            <div class="grid">
+                <div class="form-group">
+                    <label>ФИО продавца (необязательно)</label>
+                    <input type="text" id="seller_name" placeholder="Иванов Иван Иванович" style="padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                    <div class="helper-text">Для отображения в результатах</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Отработано дней</label>
+                    <input type="number" id="days_worked" value="20">
+                    <div class="helper-text">Количество смен продавца</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Личная выручка (руб.)</label>
+                    <input type="number" id="revenue" value="0">
+                    <div class="helper-text">Личная выручка (с учётом 50% для двойных смен)</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Количество чеков</label>
+                    <input type="number" id="cheques" value="0">
+                    <div class="helper-text">Количество чеков (с учётом 50% для двойных смен)</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Комплексность (товаров/чек)</label>
+                    <input type="number" id="complexity" value="1.5" step="0.1">
+                    <div class="helper-text">Среднее количество товаров в чеке</div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="calculate()">🧮 Рассчитать зарплату</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="card result-section" id="results">
+            <div class="card-header">
+                <span id="result_title">📊 Результаты расчёта</span>
+            </div>
+
+            <div id="alerts"></div>
+
+            <div id="kpi_section"></div>
+
+            <div id="salary_breakdown"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('collapsed');
+        }
+
+        function fmt(num) {
+            return num.toLocaleString('ru-RU', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+        }
+
+        function calculate() {
+            // Получаем параметры системы
+            const d_norm = parseFloat(document.getElementById('d_norm').value);
+            const oklad_norm = parseFloat(document.getElementById('oklad_norm').value);
+            const target_check = parseFloat(document.getElementById('target_check').value);
+            const target_comp = parseFloat(document.getElementById('target_comp').value);
+            const target_cheques = parseFloat(document.getElementById('target_cheques').value);
+            const bonus_check = parseFloat(document.getElementById('bonus_check').value);
+            const bonus_comp = parseFloat(document.getElementById('bonus_comp').value);
+            const bonus_qty = parseFloat(document.getElementById('bonus_qty').value);
+            const bonus_team = parseFloat(document.getElementById('bonus_team').value);
+            const dop_percent = parseFloat(document.getElementById('dop_percent').value);
+            const bonus_super = parseFloat(document.getElementById('bonus_super').value);
+
+            // Получаем данные магазина
+            const plan_min = parseFloat(document.getElementById('plan_min').value);
+            const plan = parseFloat(document.getElementById('plan').value);
+            const plan_super = parseFloat(document.getElementById('plan_super').value);
+            const shop_revenue = parseFloat(document.getElementById('shop_revenue').value);
+            const total_days = parseFloat(document.getElementById('total_days').value);
+
+            // Получаем данные продавца
+            const seller_name = document.getElementById('seller_name').value;
+            const days = parseFloat(document.getElementById('days_worked').value);
+            const revenue = parseFloat(document.getElementById('revenue').value);
+            const cheques = parseFloat(document.getElementById('cheques').value);
+            const complexity = parseFloat(document.getElementById('complexity').value);
+
+            // Расчёт среднего чека
+            const avg_check = cheques > 0 ? revenue / cheques : 0;
+
+            // Расчёт коэффициентов KPI
+            // ИСПРАВЛЕНО: если k_base < 0.7, то k = 0.5 (фиксированно), а не k_base * 0.5
+            function calcKPI(actual, target) {
+                let k_base = actual / target;
+                let k = k_base < 0.7 ? 0.5 : k_base;  // Если меньше 0.7, всегда 0.5
+                return Math.min(1.2, k);
+            }
+
+            const k_check = calcKPI(avg_check, target_check);
+            const k_comp = calcKPI(complexity, target_comp);
+            const target_cheques_seller = target_cheques * (days / d_norm);
+            const k_qty = calcKPI(cheques, target_cheques_seller);
+
+            // Расчёт командного коэффициента
+            let k_team = 0.2;
+            if (shop_revenue >= plan * 1.05) {
+                k_team = 1.2;
+            } else if (shop_revenue >= plan * 0.95) {
+                k_team = 1.0;
+            } else if (shop_revenue >= plan_min * 1.15) {
+                k_team = 0.8;
+            } else if (shop_revenue >= plan_min) {
+                k_team = 0.5;
+            }
+
+            // Расчёт частей зарплаты
+            const oklad = oklad_norm * (days / d_norm);
+            const bonus_check_val = bonus_check * (days / d_norm) * k_check;
+            const bonus_comp_val = bonus_comp * (days / d_norm) * k_comp;
+            const bonus_qty_val = bonus_qty * (days / d_norm) * k_qty;
+            const bonus_team_val = bonus_team * (days / d_norm) * k_team;
+
+            // Личный план и дополнительный бонус
+            const days_share = days / total_days;
+            const personal_plan = plan * days_share;
+            const dop_bonus = Math.max(0, revenue - personal_plan) * (dop_percent / 100);
+
+            // Итого без бонуса 10k
+            const total_without_10k = oklad + bonus_check_val + bonus_comp_val + bonus_qty_val + bonus_team_val + dop_bonus;
+
+            // Проверка бонуса за сверхплан
+            const revenue_percent = shop_revenue > 0 ? (revenue / shop_revenue) * 100 : 0;
+            const is_super_plan = shop_revenue >= plan_super;
+            const eligible_10k = is_super_plan && (
+                (days >= 10 && revenue_percent >= 15) || revenue_percent >= 25
+            );
+            const bonus_10k = eligible_10k ? bonus_super : 0;
+
+            // Итого зарплата
+            const total_salary = total_without_10k + bonus_10k;
+
+            // Вывод результатов
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block';
+
+            // Заголовок с именем продавца
+            if (seller_name) {
+                document.getElementById('result_title').textContent = `📊 Результаты расчёта: ${seller_name}`;
+            } else {
+                document.getElementById('result_title').textContent = '📊 Результаты расчёта';
+            }
+
+            // Алерты
+            let alerts = '';
+            if (shop_revenue >= plan_super) {
+                alerts += '<div class="alert alert-success">✅ Магазин выполнил СВЕРХПЛАН! Возможен бонус за сверхплан.</div>';
+            } else if (shop_revenue >= plan) {
+                alerts += '<div class="alert alert-info">✅ Магазин выполнил план!</div>';
+            } else if (shop_revenue >= plan_min) {
+                alerts += '<div class="alert alert-warning">⚠️ Магазин выполнил минимальный план.</div>';
+            } else {
+                alerts += '<div class="alert alert-warning">⚠️ Магазин не выполнил минимальный план.</div>';
+            }
+
+            document.getElementById('alerts').innerHTML = alerts;
+
+            // KPI секция
+            let kpiHTML = '<h3 style="margin-bottom: 15px; color: #667eea;">📈 Личные показатели (KPI)</h3>';
+            kpiHTML += '<div class="kpi-grid">';
+            kpiHTML += `<div class="kpi-card">
+                <div class="kpi-label">Средний чек</div>
+                <div class="kpi-value">${fmt(avg_check)} ₽</div>
+                <div class="helper-text">Цель: ${fmt(target_check)} ₽ | Коэффициент: ${k_check.toFixed(2)}</div>
+            </div>`;
+            kpiHTML += `<div class="kpi-card">
+                <div class="kpi-label">Комплексность</div>
+                <div class="kpi-value">${complexity.toFixed(2)} тов/чек</div>
+                <div class="helper-text">Цель: ${target_comp.toFixed(1)} | Коэффициент: ${k_comp.toFixed(2)}</div>
+            </div>`;
+            kpiHTML += `<div class="kpi-card">
+                <div class="kpi-label">Количество чеков</div>
+                <div class="kpi-value">${cheques} чеков</div>
+                <div class="helper-text">Цель: ${target_cheques_seller.toFixed(0)} | Коэффициент: ${k_qty.toFixed(2)}</div>
+            </div>`;
+            kpiHTML += `<div class="kpi-card">
+                <div class="kpi-label">Командный результат</div>
+                <div class="kpi-value">k = ${k_team.toFixed(2)}</div>
+                <div class="helper-text">План магазина: ${(shop_revenue/plan*100).toFixed(1)}%</div>
+            </div>`;
+            kpiHTML += '</div>';
+
+            document.getElementById('kpi_section').innerHTML = kpiHTML;
+
+            // Разбивка зарплаты
+            let salaryHTML = '<h3 style="margin-bottom: 15px; color: #667eea; margin-top: 25px;">💵 Разбивка зарплаты</h3>';
+            salaryHTML += `<div class="result-item">
+                <span class="result-label">Оклад (${days} из ${d_norm} дней)</span>
+                <span class="result-value">${fmt(oklad)} ₽</span>
+            </div>`;
+            salaryHTML += `<div class="result-item">
+                <span class="result-label">Бонус за средний чек (k=${k_check.toFixed(2)})</span>
+                <span class="result-value">${fmt(bonus_check_val)} ₽</span>
+            </div>`;
+            salaryHTML += `<div class="result-item">
+                <span class="result-label">Бонус за комплексность (k=${k_comp.toFixed(2)})</span>
+                <span class="result-value">${fmt(bonus_comp_val)} ₽</span>
+            </div>`;
+            salaryHTML += `<div class="result-item">
+                <span class="result-label">Бонус за количество чеков (k=${k_qty.toFixed(2)})</span>
+                <span class="result-value">${fmt(bonus_qty_val)} ₽</span>
+            </div>`;
+            salaryHTML += `<div class="result-item">
+                <span class="result-label">Командный бонус (k=${k_team.toFixed(2)})</span>
+                <span class="result-value">${fmt(bonus_team_val)} ₽</span>
+            </div>`;
+            salaryHTML += `<div class="result-item">
+                <span class="result-label">Дополнительный бонус (${dop_percent}% от ${fmt(Math.max(0, revenue - personal_plan))})</span>
+                <span class="result-value">${fmt(dop_bonus)} ₽</span>
+            </div>`;
+
+            if (eligible_10k) {
+                salaryHTML += `<div class="result-item bonus-10k">
+                    <span class="result-label">🎉 Бонус за сверхплан магазина</span>
+                    <span class="result-value">+${fmt(bonus_super)} ₽</span>
+                </div>`;
+                salaryHTML += `<div class="helper-text" style="margin-top: 10px;">Условия выполнены: дней ${days} ${days >= 10 ? '≥10 ✅' : '<10 ❌'}, доля выручки ${revenue_percent.toFixed(1)}% ${revenue_percent >= 15 ? '≥15% ✅' : revenue_percent >= 25 ? '≥25% ✅' : '< условий ❌'}</div>`;
+            }
+
+            salaryHTML += `<div class="result-item total">
+                <span class="result-label">💰 ИТОГО ЗАРПЛАТА</span>
+                <span class="result-value">${fmt(total_salary)} ₽</span>
+            </div>`;
+
+            document.getElementById('salary_breakdown').innerHTML = salaryHTML;
+
+            // Прокрутка к результатам
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
