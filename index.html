@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор зарплаты продавца</title>
+    <title>Калькулятор зарплаты - Чароит</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #D4C4E8 0%, #B8A4D4 50%, #A7D9ED 100%);
             padding: 20px;
             min-height: 100vh;
         }
@@ -23,29 +23,82 @@
             margin: 0 auto;
         }
 
-        h1 {
+        .header {
             text-align: center;
-            color: white;
             margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            max-width: 280px;
+            height: auto;
+            filter: brightness(0) saturate(100%) invert(100%);
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(67, 67, 67, 0.2);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .header-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .header-links a, .header-links button {
+            padding: 12px 25px;
+            background: white;
+            color: #B8A4D4;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(184, 164, 212, 0.2);
+        }
+
+        .header-links a:hover, .header-links button:hover {
+            background: #B8A4D4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(184, 164, 212, 0.3);
+        }
+
+        .header-links button {
+            background: #F4C2C2;
+            color: white;
+        }
+
+        .header-links button:hover {
+            background: #E8B0B0;
         }
 
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 20px;
+            padding: 30px;
             margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(184, 164, 212, 0.2);
         }
 
         .card-header {
             font-size: 1.5em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
+            font-weight: 600;
+            color: #B8A4D4;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #D4C4E8;
+            padding-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -58,47 +111,50 @@
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
             font-weight: 600;
-            margin-bottom: 5px;
-            color: #333;
+            margin-bottom: 8px;
+            color: #434343;
         }
 
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 14px;
+            border: 2px solid #D4C4E8;
+            border-radius: 12px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background: #FCF9E8;
         }
 
-        input[type="number"]:focus {
+        input[type="number"]:focus, input[type="text"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #B8A4D4;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(184, 164, 212, 0.1);
         }
 
         .btn {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #B8A4D4 0%, #D4C4E8 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 20px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
             margin-top: 20px;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(184, 164, 212, 0.4);
         }
 
         .btn:active {
@@ -106,11 +162,15 @@
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #A9CCB8;
             padding: 10px 20px;
             font-size: 14px;
             width: auto;
             margin-top: 0;
+        }
+
+        .btn-secondary:hover {
+            background: #95B8A4;
         }
 
         .result-section {
@@ -121,27 +181,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: #FCF9E8;
+            border-radius: 12px;
+            border-left: 4px solid #B8A4D4;
         }
 
         .result-item.total {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #B8A4D4 0%, #D4C4E8 100%);
             color: white;
             font-size: 1.5em;
             font-weight: bold;
             border-left: none;
             margin-top: 25px;
-            padding: 20px;
+            padding: 22px;
         }
 
         .result-item.bonus-10k {
-            background: #28a745;
+            background: #A9CCB8;
             color: white;
-            border-left: 4px solid #1e7e34;
+            border-left: 4px solid #7BA88F;
         }
 
         .result-label {
@@ -151,8 +211,8 @@
 
         .result-value {
             font-weight: bold;
-            color: #667eea;
-            font-size: 1.1em;
+            color: #B8A4D4;
+            font-size: 1.15em;
         }
 
         .result-item.total .result-value {
@@ -164,28 +224,28 @@
         }
 
         .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
             font-weight: 600;
         }
 
         .alert-info {
-            background: #d1ecf1;
-            border-left: 4px solid #17a2b8;
-            color: #0c5460;
+            background: #A7D9ED;
+            border-left: 4px solid #6BB6D6;
+            color: #434343;
         }
 
         .alert-success {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            color: #155724;
+            background: #A9CCB8;
+            border-left: 4px solid #7BA88F;
+            color: white;
         }
 
         .alert-warning {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            color: #856404;
+            background: #F4C2C2;
+            border-left: 4px solid #E8B0B0;
+            color: #8B0000;
         }
 
         .kpi-grid {
@@ -196,29 +256,29 @@
         }
 
         .kpi-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            background: #FCF9E8;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid #B8A4D4;
         }
 
         .kpi-label {
             font-weight: 600;
-            color: #666;
-            margin-bottom: 5px;
+            color: #434343;
+            margin-bottom: 8px;
             font-size: 0.9em;
         }
 
         .kpi-value {
-            font-size: 1.3em;
+            font-size: 1.35em;
             font-weight: bold;
-            color: #667eea;
+            color: #B8A4D4;
         }
 
         .helper-text {
             font-size: 0.85em;
             color: #666;
-            margin-top: 3px;
+            margin-top: 5px;
             font-style: italic;
         }
 
@@ -228,7 +288,7 @@
         }
 
         .collapsible:hover {
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .section-content {
@@ -253,12 +313,70 @@
             .kpi-grid {
                 grid-template-columns: 1fr;
             }
+
+            .header-links {
+                flex-direction: column;
+            }
+
+            .header-links a, .header-links button {
+                width: 100%;
+            }
+
+            .logo-container img {
+                max-width: 200px;
+            }
         }
     </style>
 </head>
 <body>
+    <script>
+        // ПРОВЕРКА АВТОРИЗАЦИИ
+        function checkAuth() {
+            const token = localStorage.getItem('salary_auth_token');
+            const expires = localStorage.getItem('salary_auth_expires');
+
+            if (!token || !expires) {
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            const now = new Date().getTime();
+            if (now > parseInt(expires)) {
+                localStorage.removeItem('salary_auth_token');
+                localStorage.removeItem('salary_auth_expires');
+                alert('Срок действия пароля истёк. Пожалуйста, войдите снова.');
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            return true;
+        }
+
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('salary_auth_token');
+                localStorage.removeItem('salary_auth_expires');
+                window.location.href = 'login.html';
+            }
+        }
+
+        if (!checkAuth()) {
+            document.body.innerHTML = '<div style="text-align: center; padding: 50px; color: white;">Перенаправление...</div>';
+        }
+    </script>
+
     <div class="container">
-        <h1>💰 Калькулятор зарплаты продавца</h1>
+        <div class="header">
+            <div class="logo-container">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' font-weight='bold' font-family='Arial' fill='white'%3EЧАРОИТ%3C/text%3E%3C/svg%3E" alt="Чароит">
+            </div>
+            <h1>💰 Калькулятор зарплаты продавца</h1>
+        </div>
+
+        <div class="header-links">
+            <a href="reglament.html">📄 Регламент расчёта зарплаты</a>
+            <button onclick="logout()">🚪 Выйти</button>
+        </div>
 
         <!-- Параметры системы -->
         <div class="card">
@@ -270,7 +388,7 @@
             <div id="params" class="section-content">
                 <div class="grid">
                     <div>
-                        <h3 style="color: #667eea; margin-bottom: 15px;">Базовые параметры</h3>
+                        <h3 style="color: #B8A4D4; margin-bottom: 15px;">Базовые параметры</h3>
 
                         <div class="form-group">
                             <label>Норма рабочих дней (D норма)</label>
@@ -286,7 +404,7 @@
                     </div>
 
                     <div>
-                        <h3 style="color: #667eea; margin-bottom: 15px;">Целевые показатели</h3>
+                        <h3 style="color: #B8A4D4; margin-bottom: 15px;">Целевые показатели</h3>
 
                         <div class="form-group">
                             <label>Целевой средний чек (руб.)</label>
@@ -308,7 +426,7 @@
                     </div>
 
                     <div>
-                        <h3 style="color: #667eea; margin-bottom: 15px;">Личные бонусы</h3>
+                        <h3 style="color: #B8A4D4; margin-bottom: 15px;">Личные бонусы</h3>
 
                         <div class="form-group">
                             <label>Бонус за средний чек (руб.)</label>
@@ -330,7 +448,7 @@
                     </div>
 
                     <div>
-                        <h3 style="color: #667eea; margin-bottom: 15px;">Командный и доп. бонусы</h3>
+                        <h3 style="color: #B8A4D4; margin-bottom: 15px;">Командный и доп. бонусы</h3>
 
                         <div class="form-group">
                             <label>Командный бонус за норму дней (руб.)</label>
@@ -398,7 +516,7 @@
             <div class="grid">
                 <div class="form-group">
                     <label>ФИО продавца (необязательно)</label>
-                    <input type="text" id="seller_name" placeholder="Иванов Иван Иванович" style="padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                    <input type="text" id="seller_name" placeholder="Иванов Иван Иванович">
                     <div class="helper-text">Для отображения в результатах</div>
                 </div>
 
@@ -455,7 +573,6 @@
         }
 
         function calculate() {
-            // Получаем параметры системы
             const d_norm = parseFloat(document.getElementById('d_norm').value);
             const oklad_norm = parseFloat(document.getElementById('oklad_norm').value);
             const target_check = parseFloat(document.getElementById('target_check').value);
@@ -468,28 +585,23 @@
             const dop_percent = parseFloat(document.getElementById('dop_percent').value);
             const bonus_super = parseFloat(document.getElementById('bonus_super').value);
 
-            // Получаем данные магазина
             const plan_min = parseFloat(document.getElementById('plan_min').value);
             const plan = parseFloat(document.getElementById('plan').value);
             const plan_super = parseFloat(document.getElementById('plan_super').value);
             const shop_revenue = parseFloat(document.getElementById('shop_revenue').value);
             const total_days = parseFloat(document.getElementById('total_days').value);
 
-            // Получаем данные продавца
             const seller_name = document.getElementById('seller_name').value;
             const days = parseFloat(document.getElementById('days_worked').value);
             const revenue = parseFloat(document.getElementById('revenue').value);
             const cheques = parseFloat(document.getElementById('cheques').value);
             const complexity = parseFloat(document.getElementById('complexity').value);
 
-            // Расчёт среднего чека
             const avg_check = cheques > 0 ? revenue / cheques : 0;
 
-            // Расчёт коэффициентов KPI
-            // ИСПРАВЛЕНО: если k_base < 0.7, то k = 0.5 (фиксированно), а не k_base * 0.5
             function calcKPI(actual, target) {
                 let k_base = actual / target;
-                let k = k_base < 0.7 ? 0.5 : k_base;  // Если меньше 0.7, всегда 0.5
+                let k = k_base < 0.7 ? 0.5 : k_base;
                 return Math.min(1.2, k);
             }
 
@@ -498,7 +610,6 @@
             const target_cheques_seller = target_cheques * (days / d_norm);
             const k_qty = calcKPI(cheques, target_cheques_seller);
 
-            // Расчёт командного коэффициента
             let k_team = 0.2;
             if (shop_revenue >= plan * 1.05) {
                 k_team = 1.2;
@@ -510,22 +621,18 @@
                 k_team = 0.5;
             }
 
-            // Расчёт частей зарплаты
             const oklad = oklad_norm * (days / d_norm);
             const bonus_check_val = bonus_check * (days / d_norm) * k_check;
             const bonus_comp_val = bonus_comp * (days / d_norm) * k_comp;
             const bonus_qty_val = bonus_qty * (days / d_norm) * k_qty;
             const bonus_team_val = bonus_team * (days / d_norm) * k_team;
 
-            // Личный план и дополнительный бонус
             const days_share = days / total_days;
             const personal_plan = plan * days_share;
             const dop_bonus = Math.max(0, revenue - personal_plan) * (dop_percent / 100);
 
-            // Итого без бонуса 10k
             const total_without_10k = oklad + bonus_check_val + bonus_comp_val + bonus_qty_val + bonus_team_val + dop_bonus;
 
-            // Проверка бонуса за сверхплан
             const revenue_percent = shop_revenue > 0 ? (revenue / shop_revenue) * 100 : 0;
             const is_super_plan = shop_revenue >= plan_super;
             const eligible_10k = is_super_plan && (
@@ -533,21 +640,17 @@
             );
             const bonus_10k = eligible_10k ? bonus_super : 0;
 
-            // Итого зарплата
             const total_salary = total_without_10k + bonus_10k;
 
-            // Вывод результатов
             const resultsDiv = document.getElementById('results');
             resultsDiv.style.display = 'block';
 
-            // Заголовок с именем продавца
             if (seller_name) {
                 document.getElementById('result_title').textContent = `📊 Результаты расчёта: ${seller_name}`;
             } else {
                 document.getElementById('result_title').textContent = '📊 Результаты расчёта';
             }
 
-            // Алерты
             let alerts = '';
             if (shop_revenue >= plan_super) {
                 alerts += '<div class="alert alert-success">✅ Магазин выполнил СВЕРХПЛАН! Возможен бонус за сверхплан.</div>';
@@ -561,8 +664,7 @@
 
             document.getElementById('alerts').innerHTML = alerts;
 
-            // KPI секция
-            let kpiHTML = '<h3 style="margin-bottom: 15px; color: #667eea;">📈 Личные показатели (KPI)</h3>';
+            let kpiHTML = '<h3 style="margin-bottom: 15px; color: #B8A4D4;">📈 Личные показатели (KPI)</h3>';
             kpiHTML += '<div class="kpi-grid">';
             kpiHTML += `<div class="kpi-card">
                 <div class="kpi-label">Средний чек</div>
@@ -588,8 +690,7 @@
 
             document.getElementById('kpi_section').innerHTML = kpiHTML;
 
-            // Разбивка зарплаты
-            let salaryHTML = '<h3 style="margin-bottom: 15px; color: #667eea; margin-top: 25px;">💵 Разбивка зарплаты</h3>';
+            let salaryHTML = '<h3 style="margin-bottom: 15px; color: #B8A4D4; margin-top: 25px;">💵 Разбивка зарплаты</h3>';
             salaryHTML += `<div class="result-item">
                 <span class="result-label">Оклад (${days} из ${d_norm} дней)</span>
                 <span class="result-value">${fmt(oklad)} ₽</span>
@@ -630,7 +731,6 @@
 
             document.getElementById('salary_breakdown').innerHTML = salaryHTML;
 
-            // Прокрутка к результатам
             resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     </script>
