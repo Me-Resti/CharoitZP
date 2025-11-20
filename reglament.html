@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регламент расчёта зарплаты - Чароит</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D4C4E8 0%, #B8A4D4 50%, #A7D9ED 100%);
+            padding: 20px;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 15px 40px rgba(184, 164, 212, 0.3);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            max-width: 280px;
+            height: auto;
+            filter: brightness(0) saturate(100%) invert(44%) sepia(18%) saturate(1024%) hue-rotate(223deg) brightness(96%) contrast(87%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #D4C4E8;
+        }
+
+        .header h1 {
+            color: #B8A4D4;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .header .subtitle {
+            color: #434343;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .header .year {
+            color: #B8A4D4;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #B8A4D4;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D4C4E8;
+        }
+
+        .section h3 {
+            color: #A9CCB8;
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            color: #434343;
+        }
+
+        .section ul, .section ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section li {
+            margin-bottom: 10px;
+            color: #434343;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table th {
+            background: linear-gradient(135deg, #B8A4D4 0%, #D4C4E8 100%);
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            border: 1px solid #D4C4E8;
+            padding: 12px;
+            background: #FCF9E8;
+        }
+
+        table tr:nth-child(even) td {
+            background: white;
+        }
+
+        .formula {
+            background: #FCF9E8;
+            padding: 14px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #B8A4D4;
+            margin: 20px 0;
+            font-weight: 600;
+            color: #434343;
+        }
+
+        .back-to-calc {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #D4C4E8;
+        }
+
+        .back-to-calc a {
+            display: inline-block;
+            padding: 16px 35px;
+            background: linear-gradient(135deg, #B8A4D4 0%, #D4C4E8 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.05em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(184, 164, 212, 0.3);
+        }
+
+        .back-to-calc a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 164, 212, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .section h2 {
+                font-size: 1.4em;
+            }
+
+            .logo-container img {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // ПРОВЕРКА АВТОРИЗАЦИИ
+        function checkAuth() {
+            const token = localStorage.getItem('salary_auth_token');
+            const expires = localStorage.getItem('salary_auth_expires');
+
+            if (!token || !expires) {
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            const now = new Date().getTime();
+            if (now > parseInt(expires)) {
+                localStorage.removeItem('salary_auth_token');
+                localStorage.removeItem('salary_auth_expires');
+                alert('Срок действия пароля истёк. Пожалуйста, войдите снова.');
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            return true;
+        }
+
+        if (!checkAuth()) {
+            document.body.innerHTML = '<div style="text-align: center; padding: 50px; color: white;">Перенаправление...</div>';
+        }
+    </script>
+
+    <div class="container">
+        <div class="logo-container">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' font-weight='bold' font-family='Arial' fill='%23B8A4D4'%3EЧАРОИТ%3C/text%3E%3C/svg%3E" alt="Чароит">
+        </div>
+
+        <div class="header">
+            <h1>РЕГЛАМЕНТ</h1>
+            <p class="subtitle">Системы расчёта зарплаты продавцов</p>
+            <p>Единая логика расчёта зарплаты для всех магазинов сети</p>
+            <p class="year">2025</p>
+        </div>
+
+        <div class="section">
+            <h2>1. Структура зарплаты продавца</h2>
+            <p><strong>Зарплата за месяц = сумма 6 частей + возможный бонус 10 000:</strong></p>
+            <ol>
+                <li><strong>Оклад</strong> – фиксированная выплата за отработанные дни</li>
+                <li><strong>Личный бонус за средний чек</strong> – до 6 000 руб. за 20 дней</li>
+                <li><strong>Личный бонус за комплексность</strong> – до 6 000 руб. за 20 дней</li>
+                <li><strong>Личный бонус за количество покупателей (чеков)</strong> – до 6 000 руб. за 20 дней</li>
+                <li><strong>Командный бонус</strong> – зависит от выполнения плана магазина</li>
+                <li><strong>Дополнительный бонус</strong> – процент от личной выручки выше личного плана</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>2. Базовые параметры системы</h2>
+            <table>
+                <tr>
+                    <th>Параметр</th>
+                    <th>Значение</th>
+                </tr>
+                <tr>
+                    <td>Оклад за 20 рабочих дней</td>
+                    <td>25 000 руб.</td>
+                </tr>
+                <tr>
+                    <td>Личный бонус за средний чек</td>
+                    <td>6 000 руб.</td>
+                </tr>
+                <tr>
+                    <td>Личный бонус за комплексность</td>
+                    <td>6 000 руб.</td>
+                </tr>
+                <tr>
+                    <td>Личный бонус за количество чеков</td>
+                    <td>6 000 руб.</td>
+                </tr>
+                <tr>
+                    <td>Командный бонус за 20 дней</td>
+                    <td>8 000 руб.</td>
+                </tr>
+                <tr>
+                    <td>Целевой средний чек</td>
+                    <td>15 000 руб.</td>
+                </tr>
+                <tr>
+                    <td>Целевая комплексность</td>
+                    <td>1,5 товара/чек</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>3. Три уровня плана магазина</h2>
+            <ul>
+                <li><strong>Минимальный план</strong> – нижняя граница выполнения плана</li>
+                <li><strong>План магазина</strong> – основная цель (100%)</li>
+                <li><strong>Сверхплан</strong> – повышенная цель, при достижении которой возможен бонус 10 000</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>4. Расчёт коэффициентов KPI</h2>
+            <p><strong>Для личных бонусов (средний чек, комплексность, количество чеков):</strong></p>
+            <div class="formula">k_базовый = Факт / Цель</div>
+            <p>Если k_базовый &lt; 0.7, то используется k = 0.5 (фиксированно)</p>
+            <p>Иначе k = k_базовый</p>
+            <p>Максимум k = 1.2 (при перевыполнении)</p>
+        </div>
+
+        <div class="section">
+            <h2>5. Командный коэффициент</h2>
+            <ul>
+                <li>Факт &lt; План_мин → k_команды = 0,2</li>
+                <li>План_мин ≤ Факт &lt; План_мин × 1,15 → k_команды = 0,5</li>
+                <li>Факт &lt; План × 0,95 → k_команды = 0,8</li>
+                <li>Факт ≤ План × 1,05 → k_команды = 1,0</li>
+                <li>Факт &gt; План × 1,05 → k_команды = 1,2</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>6. Расчёт зарплаты</h2>
+            <h3>Оклад</h3>
+            <div class="formula">Оклад = Оклад_20 × (Дни / 20)</div>
+
+            <h3>Личные бонусы</h3>
+            <div class="formula">Бонус_средний_чек = 6 000 × (Дни / 20) × k_чек</div>
+            <div class="formula">Бонус_комплексность = 6 000 × (Дни / 20) × k_комп</div>
+            <div class="formula">Бонус_чеков = 6 000 × (Дни / 20) × k_чеков</div>
+
+            <h3>Командный бонус</h3>
+            <div class="formula">Командный = 8 000 × (Дни / 20) × k_команды</div>
+
+            <h3>Дополнительный бонус</h3>
+            <div class="formula">Доп_бонус = max(0; Выручка − Личный_план) × 7%</div>
+        </div>
+
+        <div class="section">
+            <h2>7. Бонус 10 000 руб. за сверхплан</h2>
+            <p><strong>Условия:</strong></p>
+            <ol>
+                <li>Магазин выполнил сверхплан (Факт ≥ Сверхплан)</li>
+                <li>И выполнено одно из условий:
+                    <ul>
+                        <li>Продавец отработал ≥10 дней И его выручка ≥15% от общей выручки магазина</li>
+                        <li>ИЛИ выручка продавца ≥25% от общей выручки (независимо от количества дней)</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>8. Двойные смены (схема 50/50)</h2>
+            <p>В сменах с двумя продавцами применяется командный подход:</p>
+            <ul>
+                <li>Выручка смены делится поровну между двумя продавцами</li>
+                <li>Количество чеков смены делится поровну</li>
+                <li>Комплексность считается общей для обоих</li>
+            </ul>
+            <p>Это исключает конкуренцию между коллегами и стимулирует командную работу.</p>
+        </div>
+
+        <div class="section">
+            <h2>9. Личный план продавца</h2>
+            <p>Личный план рассчитывается пропорционально доле отработанных дней:</p>
+            <div class="formula">Доля_дней = Дни_продавца / Сумма_дней_всех_продавцов</div>
+            <div class="formula">Личный_план = План_магазина × Доля_дней</div>
+            <p>Это справедливо учитывает вклад каждого продавца в зависимости от количества отработанных дней.</p>
+        </div>
+
+        <div class="section">
+            <h2>10. Итоговая логика</h2>
+            <p>Регламент предусматривает единый расчёт зарплаты по всей сети магазинов. Система учитывает:</p>
+            <ul>
+                <li><strong>Оклад</strong> — за присутствие на работе</li>
+                <li><strong>Личные бонусы</strong> — за качество работы с каждым клиентом</li>
+                <li><strong>Командный бонус</strong> — за результат магазина в целом</li>
+                <li><strong>Дополнительный бонус</strong> — за превышение личного плана</li>
+                <li><strong>Бонус 10 000</strong> — за сверхплан и значительный вклад в результат</li>
+            </ul>
+            <p>Все формулы масштабируются по количеству отработанных дней, что делает систему справедливой для всех сотрудников.</p>
+        </div>
+
+        <div class="back-to-calc">
+            <a href="index.html">← Вернуться к калькулятору</a>
+        </div>
+    </div>
+</body>
+</html>
