@@ -70,9 +70,17 @@
             font-size: 1em;
         }
 
-        input[type="password"] {
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="password"],
+        input[type="text"] {
             width: 100%;
             padding: 16px;
+            padding-right: 50px;
             border: 2px solid #D4C4E8;
             border-radius: 12px;
             font-size: 16px;
@@ -80,11 +88,28 @@
             background: #FCF9E8;
         }
 
-        input[type="password"]:focus {
+        input[type="password"]:focus,
+        input[type="text"]:focus {
             outline: none;
             border-color: #B8A4D4;
             background: white;
             box-shadow: 0 0 0 3px rgba(184, 164, 212, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 20px;
+            color: #B8A4D4;
+            transition: all 0.3s;
+            padding: 5px;
+        }
+
+        .toggle-password:hover {
+            color: #9A88C0;
+            transform: scale(1.1);
         }
 
         .btn-login {
@@ -160,7 +185,12 @@
         <form id="loginForm" onsubmit="checkPassword(event)">
             <div class="form-group">
                 <label for="password">Пароль</label>
-                <input type="password" id="password" placeholder="Введите пароль" required autofocus>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Введите пароль" required autofocus>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()" id="toggleIcon">
+                        👁️
+                    </span>
+                </div>
             </div>
 
             <button type="submit" class="btn-login">Войти</button>
@@ -173,6 +203,20 @@
     </div>
 
     <script>
+        // ПОКАЗАТЬ/СКРЫТЬ ПАРОЛЬ
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
         // НАСТРОЙКА: Хеш пароля (SHA-256)
         // Текущий пароль: "salary2025"
         const PASSWORD_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
@@ -206,6 +250,8 @@
             } else {
                 errorDiv.style.display = 'block';
                 document.getElementById('password').value = '';
+                document.getElementById('password').type = 'password';
+                document.getElementById('toggleIcon').textContent = '👁️';
                 document.getElementById('password').focus();
             }
         }
